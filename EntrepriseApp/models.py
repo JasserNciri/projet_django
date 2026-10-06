@@ -1,3 +1,5 @@
+from time import timezone
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator,MaxLengthValidator
@@ -10,6 +12,7 @@ matricule_fiscale_validator = RegexValidator(
     regex=r'^\d{7}[/ -]?[A-Za-z][/ -]?[ABDNPEabdnpe][/ -]?[MPCNEmpcne][/ -]?\d{3}$'
     message="Format incorrect -(ex,1234567AAM000 OU 1234567-A-A-M-000)."
 )
+
 
 def validate_email(value):
     if not value :
@@ -35,6 +38,7 @@ class Utilisateur (AbstractUser):
 
 
 
+
 class Entreprise(models.Model):
     raison_sociale = models.CharField(max_length=200, null=False,blank=False)
     matricule_fiscale = models.CharField(max_length=17, unique=True, 
@@ -54,3 +58,31 @@ class Entreprise(models.Model):
     created_at = models.DateTimeField(auto_now_add = True )
     updated_at = models.DateTimeField(auto_now = True)
     gerant =  models.OneToOneField(Utilisateur, on_delete=models.CASCADE, related_name='entreprise')
+
+@classmethod
+def _generate_user_id(cls):
+    annee = timezone.now().strftime("%y")
+    prefixe = f"{annee}user"
+
+    dernier = (
+        cls.objects
+        .filter(user_id__startswith=prefixe)
+        .order_by("user_id")
+        .last()
+    )
+
+    compteur = int(dernier.user_id[-2:]) + 1 if dernier else 0
+
+    if compteur > 99:
+        raise ValidationError(
+            "Le compteur a atteint sa valeur maximale pour l'année en cours."
+        )
+
+    return f"{prefixe}{compteur:02d}"
+
+
+def save(self, *args, **kwargs):
+    if not self.user_id:
+        self.user_id = self._generate_user_id()
+
+    super().save(*args, **kwargs)
