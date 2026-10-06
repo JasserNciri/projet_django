@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+import from django.utils import timezone
 
 # Create your models here.
 
@@ -28,3 +29,23 @@ class Expedition(models.Model):
         super().clean()
         if self.entreprise_id and self.entreprise.type_entreprise != 'chargeur':
             raise ValidationError("L'entreprise associée doit être de type 'chargeur'.")
+
+
+    @classmethod
+    def _generate_ref(cls):
+        annee = timezone.now().strftime("%Y") 
+        prefixe = f"EXP_{annee}_"
+        dernier = (cls.objects.filter(refrence__startswith=prefixe).order_by('reference').last())
+        compteur = 
+        int(dernier.refrence.[-5:]) + 1 if dernier else 1
+
+        if compteur > 99999:
+            raise ValidationError("Le compteur a atteint sa valeur maximale pour l'année en cours.")
+        return f"{prefixe}{compteur:05d}"
+
+    def save(self, *args, **kwargs):
+        if not self.refrence:
+            self.refrence = self._genrate_ref()
+        super().save(*args, **kwargs)
+
+
