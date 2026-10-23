@@ -29,7 +29,7 @@ class Offre(models.Model):
         ],
         default='proposee'
     )
-    date_proposition = models.DateTimeField(auto_now_add=True)
+    date_proposition = models.DateField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     expedition = models.ForeignKey('ExpeditionApp.Expedition', on_delete=models.CASCADE,
@@ -40,12 +40,10 @@ class Offre(models.Model):
                                  related_name='offres')
 
     def clean(self):
-        # règle 1
         super().clean()
         if self.transporteur_id and self.transporteur.type_entreprise != 'transporteur':
             raise ValidationError("L'entreprise associée doit être de type 'transporteur'.")
 
-        # règle 2
         if self.vehicule_id and self.transporteur_id and self.vehicule.proprietaire_id != self.transporteur_id:
             raise ValidationError("Le véhicule doit appartenir à l'entreprise transporteur.")
 
@@ -71,12 +69,16 @@ class Offre(models.Model):
     def save(self, *args, **kwargs):
         with transaction.atomic():
             self.full_clean()
+            ancien_statut = None
+            if self.pk:
+                ancien_statut = Offre.objects.filter(pk=self.pk).values_list('statut', flat=True).first()
             super().save(*args, **kwargs)
-            if self.statut == 'acceptee':
+            if self.statut == 'acceptee' and ancien_statut != 'acceptee':
                 self.expedition.statut = 'attribuee'
                 self.expedition.save()
-                Offre.objects.filter(expedition=self.expedition, statut='proposee').exclude(pk=self.pk).update(
-                    statut='refusee', updated_at=timezone.now())
+                for autre in Offre.objects.filter(expedition=self.expedition, statut='proposee').exclude(pk=self.pk):
+                    autre.statut = 'refusee'
+                    autre.save()
 
     def __str__(self):
         return f"Offre {self.pk} - {self.expedition}"

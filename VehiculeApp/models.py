@@ -16,7 +16,7 @@ class Vehicule(models.Model):
                                          ('semi-remorque', 'Semi-Remorque'),
                                          ('fourgon', 'Fourgon'),
                                      ],default='camionette')
-    capacite_kg = models.IntegerField(validators=[MinValueValidator(100,"capacite doit etre sup a 100 kg ")])
+    capacite_kg = models.PositiveIntegerField(validators=[MinValueValidator(100,"capacite doit etre sup a 100 kg ")])
     disponibilite = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

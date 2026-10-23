@@ -16,7 +16,7 @@ matricule_fiscale_validator = RegexValidator(
 def validate_email(value):
     if not value :
         raise ValidationError("L'adresse e-mail est obligatoire.")
-    if not value .endswith('@gmail.com'):
+    if not value.lower().endswith('@gmail.com'):
         raise ValidationError("L'adresse e-mail doit se terminer par '@gmail.com'.")
 
 class Utilisateur (AbstractUser):
@@ -89,5 +89,4 @@ class Entreprise(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.raison_sociale          
-
+        return self.raison_sociale

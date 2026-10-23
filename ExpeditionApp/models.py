@@ -6,7 +6,7 @@ from decimal import Decimal
 
 
 class Expedition(models.Model):
-    refrence = models.CharField(max_length=100, unique=True)
+    reference = models.CharField(max_length=100, unique=True, blank=True)
     ville_depart = models.CharField(max_length=100)
     ville_arrivee = models.CharField(max_length=100)
     poids_kg = models.DecimalField(max_digits=10, decimal_places=2,
@@ -38,17 +38,17 @@ class Expedition(models.Model):
     def _generate_ref(cls):
         annee = timezone.now().strftime("%y")
         prefixe = f"EXP-{annee}-"
-        dernier = cls.objects.filter(refrence__startswith=prefixe).order_by('refrence').last()
-        compteur = int(dernier.refrence[-5:]) + 1 if dernier else 1
+        dernier = cls.objects.filter(reference__startswith=prefixe).order_by('reference').last()
+        compteur = int(dernier.reference[-5:]) + 1 if dernier else 1
         if compteur > 99999:
             raise ValidationError("Le compteur a atteint sa valeur maximale pour l'année en cours.")
         return f"{prefixe}{compteur:05d}"
 
     def save(self, *args, **kwargs):
-        if not self.refrence:
-            self.refrence = self._generate_ref()
+        if not self.reference:
+            self.reference = self._generate_ref()
         self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.refrence
+        return self.reference

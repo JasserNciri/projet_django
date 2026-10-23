@@ -3,7 +3,6 @@ from django.contrib import admin, messages
 from django.contrib.admin.helpers import ActionForm
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.utils.html import format_html
 from .models import Expedition
 from OffreApp.models import Offre
 
@@ -45,45 +44,31 @@ class StatutActionForm(ActionForm):
 
 
 class ExpeditionAdmin(admin.ModelAdmin):
-    list_display = ('refrence', 'ville_depart', 'ville_arrivee', 'poids_kg',
-                    'date_souhaitee', 'statut', 'statut_colore', 'entreprise')
-    list_display_links = ('refrence',)
+    list_display = ('reference', 'ville_depart', 'ville_arrivee', 'poids_kg',
+                    'date_souhaitee', 'statut', 'entreprise')
+    list_display_links = ('reference',)
     list_filter = ('statut', 'date_souhaitee', 'ville_depart', 'ville_arrivee', EnRetardAdmin)
-    search_fields = ('refrence', 'statut', 'entreprise__raison_sociale')
+    search_fields = ('reference', 'statut', 'entreprise__raison_sociale')
     list_editable = ('statut', 'ville_depart', 'ville_arrivee', 'poids_kg')
     ordering = ('-created_at',)
     date_hierarchy = 'date_souhaitee'
     list_per_page = 5
     autocomplete_fields = ('entreprise',)
-    readonly_fields = ('refrence', 'statut_colore', 'created_at', 'updated_at')
+    readonly_fields = ('reference', 'created_at', 'updated_at')
     fieldsets = (
         ('Identification', {
-            'fields': ('refrence', 'entreprise', 'description'),
+            'fields': ('reference', 'entreprise', 'description'),
         }),
         ('Trajet', {
             'fields': ('ville_depart', 'ville_arrivee', 'poids_kg', 'date_souhaitee'),
         }),
         ('Suivi', {
-            'fields': ('statut', 'statut_colore', 'created_at', 'updated_at'),
+            'fields': ('statut', 'created_at', 'updated_at'),
         }),
     )
     inlines = [OffreInline]
     action_form = StatutActionForm
     actions = ['cloturer_expeditions', 'changer_statut']
-
-    @admin.display(description='Statut')
-    def statut_colore(self, obj):
-        couleurs = {
-            'publiee': '#5BC0DE',
-            'attribuee': '#F0AD4E',
-            'en_cours': '#337AB7',
-            'livree': '#5CB85C',
-            'annulee': '#D9534F',
-        }
-        return format_html(
-            '<span style="color:white;background:{};padding:3px 8px;border-radius:4px;">{}</span>',
-            couleurs.get(obj.statut, '#999'), obj.get_statut_display(),
-        )
 
     @admin.action(description="Clôturer les expéditions sélectionnées")
     def cloturer_expeditions(self, request, queryset):
@@ -96,7 +81,7 @@ class ExpeditionAdmin(admin.ModelAdmin):
                 expedition.save()
                 traitees += 1
             except ValidationError as e:
-                self.message_user(request, f"{expedition.refrence} : {e}", messages.ERROR)
+                self.message_user(request, f"{expedition.reference} : {e}", messages.ERROR)
         self.message_user(
             request,
             f"{traitees} expédition(s) clôturée(s), {total - traitees} ignorée(s).",
@@ -119,7 +104,7 @@ class ExpeditionAdmin(admin.ModelAdmin):
                 modifiees += 1
             except ValidationError as e:
                 expedition.statut = ancien_statut
-                self.message_user(request, f"{expedition.refrence} : {e}", messages.ERROR)
+                self.message_user(request, f"{expedition.reference} : {e}", messages.ERROR)
         libelle = dict(Expedition._meta.get_field('statut').choices)[nouveau_statut]
         self.message_user(
             request,
