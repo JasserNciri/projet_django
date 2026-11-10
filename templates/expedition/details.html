@@ -1,20 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expedition {{ expedition.reference }}</title>
-</head>
-<body>
-    <h1>Expedition {{ expedition.reference }}</h1>
-    <ul>
-        <li>Départ : {{ expedition.ville_depart }}</li>
-        <li>Arrivée : {{ expedition.ville_arrivee }}</li>
-        <li>Poids : {{ expedition.poids_kg }} kg</li>
-        <li>Date souhaitée : {{ expedition.date_souhaitee }}</li>
-        <li>Statut : {{ expedition.get_statut_display }}</li>
-        <li>Description : {{ expedition.description }}</li>
-    </ul>
-    <a href="{% url 'expedition:list' %}">Retour à la liste</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Expédition {{ expedition.reference }}{% endblock %}
+{% block content %}
+<h1>Expédition {{ expedition.reference }}</h1>
+<div class="card">
+    <dl>
+        <dt>Ville de départ</dt><dd>{{ expedition.ville_depart }}</dd>
+        <dt>Ville d'arrivée</dt><dd>{{ expedition.ville_arrivee }}</dd>
+        <dt>Poids</dt><dd>{{ expedition.poids_kg }} kg</dd>
+        <dt>Date souhaitée</dt><dd>{{ expedition.date_souhaitee }}</dd>
+        <dt>Statut</dt><dd><span class="badge">{{ expedition.get_statut_display }}</span></dd>
+        <dt>Description</dt><dd>{{ expedition.description|default:"—" }}</dd>
+    </dl>
+</div>
+<div class="actions">
+    <a class="btn" href="{% url 'expedition:list' %}">← Retour à la liste</a>
+    <a class="btn btn-outline-danger" href="{% url 'expedition:delete' expedition.reference %}">Supprimer</a>
+</div>
+{% endblock %}

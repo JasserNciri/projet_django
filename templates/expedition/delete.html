@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supprimer {{ expedition.reference }}</title>
-</head>
-<body>
-    <h1>Supprimer l'expédition {{ expedition.reference }} ?</h1>
-    <p>{{ expedition.ville_depart }} → {{ expedition.ville_arrivee }}</p>
-    <form method="post">
+{% extends "base.html" %}
+{% block title %}Supprimer {{ expedition.reference }}{% endblock %}
+{% block content %}
+<h1>Supprimer l'expédition {{ expedition.reference }}</h1>
+<div class="card">
+    <p>Voulez-vous vraiment supprimer cette expédition ?</p>
+    <p class="muted">{{ expedition.ville_depart }} → {{ expedition.ville_arrivee }} · {{ expedition.poids_kg }} kg</p>
+    <form method="post" class="actions">
         {% csrf_token %}
-        <button type="submit">Oui, supprimer</button>
-        <a href="{% url 'expedition:list' %}">Annuler</a>
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a class="btn" href="{% url 'expedition:detail' expedition.reference %}">Annuler</a>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

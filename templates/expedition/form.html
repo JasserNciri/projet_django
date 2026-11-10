@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Modifier {{ object.reference }}{% else %}Nouvelle expédition{% endif %}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{% if object %}Modifier l'expédition {{ object.reference }}{% else %}Nouvelle expédition{% endif %}</h1>
+</div>
+
+<form method="post" class="card form-card" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="form-alert">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-grid">
+        {% for field in form %}
+        <div class="form-field{% if field.name == 'description' %} full{% endif %}{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} <span class="required">*</span>{% endif %}
+            </label>
+            {{ field }}
+            {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+            {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="form-actions">
+        <a href="{% url 'expedition:list' %}" class="btn">Annuler</a>
+        <button type="submit" class="btn btn-primary">{% if object %}Enregistrer les modifications{% else %}Créer l'expédition{% endif %}</button>
+    </div>
+</form>
+{% endblock %}
