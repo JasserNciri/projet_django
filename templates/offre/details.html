@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Offre n°{{ offre.pk }}{% endblock %}
+{% block content %}
+<h1>Offre n°{{ offre.pk }}</h1>
+<div class="card">
+    <dl>
+        <dt>Expédition</dt><dd>{{ offre.expedition }}</dd>
+        <dt>Transporteur</dt><dd>{{ offre.transporteur }}</dd>
+        <dt>Véhicule</dt><dd>{{ offre.vehicule }}</dd>
+        <dt>Prix</dt><dd>{{ offre.prix }}</dd>
+        <dt>Délai</dt><dd>{{ offre.delai_jours }} jour{{ offre.delai_jours|pluralize }}</dd>
+        <dt>Statut</dt><dd><span class="badge">{{ offre.get_statut_display }}</span></dd>
+        <dt>Proposée le</dt><dd>{{ offre.date_proposition|date:'d/m/Y' }}</dd>
+        <dt>Modifiée le</dt><dd>{{ offre.updated_at|date:'d/m/Y H:i' }}</dd>
+    </dl>
+</div>
+<div class="actions">
+    <a class="btn" href="{% url 'offre:offre_list' %}">← Retour à la liste</a>
+    <a class="btn" href="{% url 'offre:offre_update' offre.pk %}">Modifier</a>
+    <a class="btn btn-outline-danger" href="{% url 'offre:offre_delete' offre.pk %}">Supprimer</a>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Supprimer {{ vehicule.immatriculation }}{% endblock %}
+{% block content %}
+<h1>Supprimer le véhicule {{ vehicule.immatriculation }}</h1>
+<div class="card">
+    {% if erreur %}<div class="form-alert"><p>{{ erreur }}</p></div>{% endif %}
+    <p>Voulez-vous vraiment supprimer ce véhicule ?</p>
+    <p class="muted">{{ vehicule.get_type_vehicule_display }} · {{ vehicule.capacite_kg }} kg · {{ vehicule.proprietaire }}</p>
+    <form method="post" class="actions">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a class="btn" href="{% url 'vehicule:vehicule_detail' vehicule.pk %}">Annuler</a>
+    </form>
+</div>
+{% endblock %}

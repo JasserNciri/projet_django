@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Supprimer {{ entreprise.raison_sociale }}{% endblock %}
+{% block content %}
+<h1>Supprimer l'entreprise {{ entreprise.raison_sociale }}</h1>
+<div class="card">
+    {% if erreur %}<div class="form-alert"><p>{{ erreur }}</p></div>{% endif %}
+    <p>Voulez-vous vraiment supprimer cette entreprise ?</p>
+    <p class="muted">{{ entreprise.matricule_fiscale }} · {{ entreprise.get_type_entreprise_display }}</p>
+    <p class="muted">Ses expéditions, véhicules et offres seront aussi supprimés.</p>
+    <form method="post" class="actions">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a class="btn" href="{% url 'entreprise:entreprise_detail' entreprise.pk %}">Annuler</a>
+    </form>
+</div>
+{% endblock %}

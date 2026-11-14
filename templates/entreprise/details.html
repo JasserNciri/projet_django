@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Entreprise {{ entreprise.raison_sociale }}{% endblock %}
+{% block content %}
+<h1>Entreprise {{ entreprise.raison_sociale }}</h1>
+<div class="card">
+    <dl>
+        <dt>Raison sociale</dt><dd>{{ entreprise.raison_sociale }}</dd>
+        <dt>Matricule fiscal</dt><dd>{{ entreprise.matricule_fiscale }}</dd>
+        <dt>Type</dt><dd><span class="badge">{{ entreprise.get_type_entreprise_display }}</span></dd>
+        <dt>Adresse</dt><dd>{{ entreprise.adresse }}</dd>
+        <dt>Gérant</dt><dd>{{ entreprise.gerant }}</dd>
+        <dt>Créée le</dt><dd>{{ entreprise.created_at|date:'d/m/Y H:i' }}</dd>
+        <dt>Modifiée le</dt><dd>{{ entreprise.updated_at|date:'d/m/Y H:i' }}</dd>
+    </dl>
+</div>
+<div class="actions">
+    <a class="btn" href="{% url 'entreprise:entreprise_list' %}">← Retour à la liste</a>
+    <a class="btn" href="{% url 'entreprise:entreprise_update' entreprise.pk %}">Modifier</a>
+    <a class="btn btn-outline-danger" href="{% url 'entreprise:entreprise_delete' entreprise.pk %}">Supprimer</a>
+</div>
+{% endblock %}

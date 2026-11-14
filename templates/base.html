@@ -24,8 +24,15 @@
             background: var(--bg);
             line-height: 1.5;
         }
-        header { background: var(--primary); padding: 16px 32px; }
-        header a { font-weight: 600; font-size: 17px; color: #fff; text-decoration: none; }
+        header { background: var(--primary); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        header a { color: #fff; text-decoration: none; }
+        header a:hover { text-decoration: none; }
+        header .brand { font-weight: 600; font-size: 17px; }
+        header nav { display: flex; gap: 4px; flex-wrap: wrap; }
+        header nav a { padding: 6px 12px; border-radius: 4px; font-size: 14px; color: rgba(255, 255, 255, .8); }
+        header nav a:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+        header nav a.active { background: rgba(255, 255, 255, .18); color: #fff; font-weight: 500; }
+        @media (max-width: 640px) { header { padding: 12px 16px; } main { padding: 0 16px; } }
         main { max-width: 1000px; margin: 32px auto; padding: 0 24px; }
         h1 { font-size: 22px; font-weight: 600; margin: 0 0 24px; color: var(--primary); }
         a { color: var(--primary); text-decoration: none; }
@@ -90,11 +97,25 @@
         .form-alert p { margin: 0; }
         .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); }
         @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-muted { background: #f3f4f6; color: var(--muted); }
+        .form-field.checkbox { flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 10px; }
+        .form-field.checkbox input { width: 18px; height: 18px; accent-color: var(--primary); }
         .muted { color: var(--muted); }
     </style>
 </head>
 <body>
-    <header><a href="{% url 'expedition:list' %}">Gestion des expéditions</a></header>
+    <header>
+        <a class="brand" href="{% url 'expedition:list' %}">Gestion des expéditions</a>
+        <nav>
+            {% with ns=request.resolver_match.namespace %}
+            <a href="{% url 'expedition:list' %}"{% if ns == 'expedition' %} class="active"{% endif %}>Expéditions</a>
+            <a href="{% url 'offre:offre_list' %}"{% if ns == 'offre' %} class="active"{% endif %}>Offres</a>
+            <a href="{% url 'vehicule:vehicule_list' %}"{% if ns == 'vehicule' %} class="active"{% endif %}>Véhicules</a>
+            <a href="{% url 'entreprise:entreprise_list' %}"{% if ns == 'entreprise' %} class="active"{% endif %}>Entreprises</a>
+            {% endwith %}
+        </nav>
+    </header>
     <main>
         {% block content %}{% endblock %}
     </main>

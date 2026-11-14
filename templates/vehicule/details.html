@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Véhicule {{ vehicule.immatriculation }}{% endblock %}
+{% block content %}
+<h1>Véhicule {{ vehicule.immatriculation }}</h1>
+<div class="card">
+    <dl>
+        <dt>Immatriculation</dt><dd>{{ vehicule.immatriculation }}</dd>
+        <dt>Type</dt><dd>{{ vehicule.get_type_vehicule_display }}</dd>
+        <dt>Capacité</dt><dd>{{ vehicule.capacite_kg }} kg</dd>
+        <dt>Disponible</dt><dd>{% if vehicule.disponibilite %}<span class="badge badge-success">Oui</span>{% else %}<span class="badge badge-muted">Non</span>{% endif %}</dd>
+        <dt>Propriétaire</dt><dd>{{ vehicule.proprietaire }}</dd>
+        <dt>Créé le</dt><dd>{{ vehicule.created_at|date:'d/m/Y H:i' }}</dd>
+        <dt>Modifié le</dt><dd>{{ vehicule.updated_at|date:'d/m/Y H:i' }}</dd>
+    </dl>
+</div>
+<div class="actions">
+    <a class="btn" href="{% url 'vehicule:vehicule_list' %}">← Retour à la liste</a>
+    <a class="btn" href="{% url 'vehicule:vehicule_update' vehicule.pk %}">Modifier</a>
+    <a class="btn btn-outline-danger" href="{% url 'vehicule:vehicule_delete' vehicule.pk %}">Supprimer</a>
+</div>
+{% endblock %}
